@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tasbih Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Tasbih Online">
+          <!-- <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <path
+                d="M24 5c2.6 4.3 5.4 6.5 9 8.4v4.2l-4.1-1.9v7.1h6.7v18.4H12.4V22.8h6.7v-7.1L15 17.6v-4.2C18.6 11.5 21.4 9.3 24 5Z"
+              />
+              <path d="M20 41.2v-8.6a4 4 0 1 1 8 0v8.6" />
+              <path d="M9 41.2h30M24 5v-3" />
+            </svg>
+          </span> -->
+          <span>Tasbih Online</span>
+        </a>
+
+        <div class="top-actions">
+          <button
+            class="icon-button"
+            id="themeToggle"
+            type="button"
+            aria-label="Changer le thème"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 14.7A8.5 8.5 0 0 1 9.3 3 7 7 0 1 0 21 14.7Z" />
+            </svg>
+          </button>
+          <div
+            class="language-switch"
+            id="languageSwitch"
+            role="group"
+            aria-label="Langue"
+          >
+            <button type="button" data-language="fr">FR</button>
+            <button type="button" data-language="en">EN</button>
+            <button type="button" data-language="ar">AR</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-grid">
+        <aside class="left-panel">
+          <section class="panel quick-panel" id="quickPanel">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 4h12v17l-6-3-6 3V4Z" />
+              </svg>
+              <h2 id="quickTitle">Dhikr rapides</h2>
+            </div>
+            <div class="quick-list" id="quickList"></div>
+            <button class="outline-button" id="customDhikrBtn" type="button">
+              + Personnaliser
+            </button>
+          </section>
+
+          <section class="panel goal-panel">
+            <div class="panel-title">
+              <h2 id="goalTitle">Objectif quotidien</h2>
+            </div>
+            <div class="goal-count">
+              <strong id="todayTotalSmall">0</strong> /
+              <span id="dailyGoalSmall">1000</span>
+            </div>
+            <p id="goalSubtitle">dhikr aujourd'hui</p>
+            <div class="progress-track"><span id="goalBarSmall"></span></div>
+            <button class="ghost-button compact" id="goalEditBtn" type="button">
+              Modifier l'objectif
+            </button>
+          </section>
+        </aside>
+
+        <section class="center-stage" id="tasbih">
+          <div class="tasbih-card">
+            <button
+              class="heart-button"
+              id="favoriteBtn"
+              type="button"
+              aria-label="Ajouter aux favoris"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M20.8 5.7c-2.1-2.1-5.4-1.9-7.3.4L12 7.8l-1.5-1.7C8.6 3.8 5.3 3.6 3.2 5.7 1 7.9 1.1 11.4 3.5 13.7L12 22l8.5-8.3c2.4-2.3 2.5-5.8.3-8Z"
+                />
+              </svg>
+            </button>
+
+            <div class="counter-ring" style="--progress: 0deg">
+              <div class="ring-ornament" aria-hidden="true"></div>
+              <div class="counter-copy">
+                <h1 id="arabicName">سبحان الله</h1>
+                <p id="latinName">Subhan Allah</p>
+                <strong id="counterValue">0</strong>
+                <span
+                  >/
+                  <button
+                    id="targetButton"
+                    type="button"
+                    title="Cliquer pour modifier la cible"
+                  >
+                    <span id="targetValue">100</span
+                    ><svg
+                      class="edit-icon"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                      />
+                      <path
+                        d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z"
+                      />
+                    </svg></button
+                ></span>
+              </div>
+              <button
+                class="count-button"
+                id="countButton"
+                type="button"
+                aria-label="Ajouter un dhikr"
+              >
+                +
+              </button>
+            </div>
+
+            <div class="counter-actions">
+              <button class="secondary-button" id="resetButton" type="button">
+                <span id="resetText">Réinitialiser</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="feedback-controls" aria-label="Préférences de retour">
+            <button
+              class="toggle-button"
+              id="soundToggle"
+              type="button"
+              aria-label="Activer ou désactiver le son"
+              aria-pressed="true"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+                <path d="M16 9.5a4 4 0 0 1 0 5" />
+                <path d="M19 7a8 8 0 0 1 0 10" />
+              </svg>
+              <span>Son</span>
+            </button>
+            <button
+              class="toggle-button"
+              id="vibrationToggle"
+              type="button"
+              aria-label="Activer ou désactiver la vibration"
+              aria-pressed="true"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M10 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+                />
+                <path d="M4 8c-1 2.4-1 5.6 0 8" />
+                <path d="M20 8c1 2.4 1 5.6 0 8" />
+              </svg>
+              <span>Vibration</span>
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <section class="mobile-goal panel">
+        <div>
+          <span id="mobileGoalTitle">Objectif quotidien</span>
+          <strong
+            ><span id="todayTotalMobile">0</span> /
+            <span id="dailyGoalMobile">1000</span></strong
+          >
+          <small id="mobileGoalSubtitle">dhikr aujourd'hui</small>
+        </div>
+        <button
+          class="icon-button"
+          id="goalEditMobileBtn"
+          type="button"
+          aria-label="Modifier l'objectif"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3a9 9 0 1 0 9 9h-4a5 5 0 1 1-5-5V3Z" />
+            <path d="M13 11h8v2h-8z" />
+          </svg>
+        </button>
+        <div class="progress-track"><span id="goalBarMobile"></span></div>
+      </section>
+
+      <section class="mobile-quick panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 4h12v17l-6-3-6 3V4Z" />
+            </svg>
+            <h2 id="mobileQuickTitle">Dhikr rapides</h2>
+          </div>
+          <button class="link-button" id="showQuickBtn" type="button">
+            Voir tout
+          </button>
+        </div>
+        <div class="quick-scroll" id="quickScroll"></div>
+      </section>
+
+      <section class="panel history-panel" id="history">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 8v5l4 2" />
+              <path d="M4.9 6.8A8.5 8.5 0 1 1 3.5 12" />
+              <path d="M3 4v5h5" />
+            </svg>
+            <h2 id="historyTitle">Historique récent</h2>
+          </div>
+          <button class="link-button" id="clearHistoryBtn" type="button">
+            Effacer
+          </button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </main>
+
+    <dialog class="modal" id="dhikrModal">
+      <form method="dialog" class="modal-card" id="dhikrForm">
+        <h2 id="modalTitle">Ajouter un dhikr</h2>
+        <label
+          ><span id="arabicLabel">Texte arabe</span
+          ><input id="newArabic" required placeholder="الحمد لله"
+        /></label>
+        <label
+          ><span id="latinLabel">Transliteration</span
+          ><input id="newLatin" required placeholder="Alhamdulillah"
+        /></label>
+        <menu>
+          <button
+            class="secondary-button"
+            value="cancel"
+            type="button"
+            data-close-modal
+          >
+            Annuler
+          </button>
+          <button class="primary-small" value="default" type="submit">
+            Ajouter
+          </button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
