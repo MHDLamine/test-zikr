@@ -1,0 +1,42 @@
+{
+  "name": "Tasbih Online",
+  "short_name": "Tasbih",
+  "description": "Compteur numérique pour les prières et glorifications islamiques - Tasbih, Hamd, Takbir, Tahlil, Istighfar",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "scope": "./",
+  "orientation": "portrait-primary",
+  "background_color": "#123a31",
+  "theme_color": "#123a31",
+  "screenshots": [
+  {
+    "src": "./screenshots/desktop.png",
+    "sizes": "1911x992",
+    "type": "image/png",
+    "form_factor": "wide"
+  }
+],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
