@@ -33,6 +33,7 @@ const defaults = {
 
 let state = loadState();
 let audioContext;
+let mobileMenuCloseTimer;
 
 const $ = (selector) => document.querySelector(selector);
 const todayKey = () => new Date().toISOString().slice(0, 10);
@@ -58,6 +59,12 @@ const translations = {
     soundOff: "Son off",
     vibrationOn: "Vibration",
     vibrationOff: "Vibration off",
+    vibrationUnavailable: "Vibration indisponible",
+    vibrationUnsupportedInfo:
+      "La vibration n'est pas prise en charge par ce navigateur ou cet appareil.",
+    mobileMenuOpen: "Ouvrir le menu mobile",
+    mobileMenuClose: "Fermer le menu mobile",
+    mobileMenuTitle: "Menu",
     soundLabel: "Activer ou desactiver le son",
     vibrationLabel: "Activer ou desactiver la vibration",
     feedbackLabel: "Preferences de retour",
@@ -83,11 +90,6 @@ const translations = {
     continueBtn: "Continuer",
     editDhikrTitle: "Modifier le dhikr",
     deleteConfirm: "Supprimer ce dhikr ?",
-    fullscreenLabel: "Plein écran",
-    fullscreenTip: "Glissez le bouton pour le déplacer, étirez le bord pour le redimensionner.",
-    resizeMinLimit: "Taille minimale atteinte",
-    resizeMaxLimit: "Taille maximale atteinte",
-    resizeSpaceLimit: "Espace insuffisant",
   },
   en: {
     languageLabel: "Language",
@@ -104,6 +106,12 @@ const translations = {
     soundOff: "Sound off",
     vibrationOn: "Vibration",
     vibrationOff: "Vibration off",
+    vibrationUnavailable: "Vibration unavailable",
+    vibrationUnsupportedInfo:
+      "Vibration is not supported by this browser or device.",
+    mobileMenuOpen: "Open mobile menu",
+    mobileMenuClose: "Close mobile menu",
+    mobileMenuTitle: "Menu",
     soundLabel: "Turn sound on or off",
     vibrationLabel: "Turn vibration on or off",
     feedbackLabel: "Feedback preferences",
@@ -129,11 +137,6 @@ const translations = {
     continueBtn: "Continue",
     editDhikrTitle: "Edit dhikr",
     deleteConfirm: "Delete this dhikr?",
-    fullscreenLabel: "Full Screen",
-    fullscreenTip: "Drag the button to move it, stretch the edge to resize it.",
-    resizeMinLimit: "Minimum size reached",
-    resizeMaxLimit: "Maximum size reached",
-    resizeSpaceLimit: "Not enough space",
   },
   ar: {
     languageLabel: "اللغة",
@@ -150,6 +153,11 @@ const translations = {
     soundOff: "الصوت مغلق",
     vibrationOn: "الاهتزاز",
     vibrationOff: "الاهتزاز مغلق",
+    vibrationUnavailable: "الاهتزاز غير متاح",
+    vibrationUnsupportedInfo: "الاهتزاز غير مدعوم على هذا المتصفح أو الجهاز.",
+    mobileMenuOpen: "فتح القائمة",
+    mobileMenuClose: "إغلاق القائمة",
+    mobileMenuTitle: "القائمة",
     soundLabel: "تشغيل أو إيقاف الصوت",
     vibrationLabel: "تشغيل أو إيقاف الاهتزاز",
     feedbackLabel: "إعدادات التنبيه",
@@ -175,11 +183,6 @@ const translations = {
     continueBtn: "متابعة",
     editDhikrTitle: "تعديل الذكر",
     deleteConfirm: "حذف هذا الذكر؟",
-    fullscreenLabel: "ملء الشاشة",
-    fullscreenTip: "اسحب الزر لتحريكه، واسحب الحافة لتغيير حجمه.",
-    resizeMinLimit: "تم الوصول للحد الأدنى",
-    resizeMaxLimit: "تم الوصول للحد الأقصى",
-    resizeSpaceLimit: "لا توجد مساحة كافية",
   },
 };
 
@@ -191,6 +194,10 @@ function formatNumber(value) {
   return new Intl.NumberFormat(
     localeByLanguage[state.language] || "fr-FR",
   ).format(value || 0);
+}
+
+function canVibrate() {
+  return typeof navigator.vibrate === "function";
 }
 
 const icons = {
@@ -269,6 +276,18 @@ function renderTranslations() {
   document.documentElement.lang = state.language;
   document.documentElement.dir = state.language === "ar" ? "rtl" : "ltr";
 
+  const menuToggle = $("#mobileMenuToggle");
+  if (menuToggle) {
+    const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
+    menuToggle.setAttribute(
+      "aria-label",
+      isExpanded ? t("mobileMenuClose") : t("mobileMenuOpen"),
+    );
+  }
+
+  setText(".mobile-drawer-title", t("mobileMenuTitle"));
+  setAttribute("#mobileMenuClose", "aria-label", t("mobileMenuClose"));
+
   setAttribute("#languageSwitch", "aria-label", t("languageLabel"));
   setAttribute("#themeToggle", "aria-label", t("themeLabel"));
   setAttribute("#favoriteBtn", "aria-label", t("favoriteLabel"));
@@ -297,10 +316,6 @@ function renderTranslations() {
   setText(".primary-small", t("add"));
   setAttribute("#newArabic", "placeholder", t("arabicPlaceholder"));
   setAttribute("#newLatin", "placeholder", t("latinPlaceholder"));
-
-  setAttribute("#openFullscreenBtn", "aria-label", t("fullscreenLabel"));
-  setAttribute("#exitFullscreenBtn", "aria-label", t("fullscreenLabel"));
-  setText("#fsHelperTip", t("fullscreenTip"));
 }
 
 function renderQuickLists() {
@@ -361,16 +376,6 @@ function renderCounter() {
     "active",
     state.favorites.includes(dhikr.id),
   );
-
-  // Sync fullscreen overlay contents if they exist
-  const fsArabic = $("#fsArabicName");
-  if (fsArabic) fsArabic.textContent = dhikr.arabic;
-  const fsLatin = $("#fsLatinName");
-  if (fsLatin) fsLatin.textContent = dhikr.latin;
-  const fsCounter = $("#fsCounterValue");
-  if (fsCounter) fsCounter.textContent = formatNumber(state.count);
-  const fsTarget = $("#fsTargetValue");
-  if (fsTarget) fsTarget.textContent = formatNumber(state.target);
 }
 
 function renderGoal() {
@@ -421,26 +426,26 @@ function renderTheme() {
 function renderFeedbackControls() {
   const soundToggle = $("#soundToggle");
   const vibrationToggle = $("#vibrationToggle");
+  const vibrationSupported = canVibrate();
   soundToggle.setAttribute("aria-pressed", String(state.soundEnabled));
-  vibrationToggle.setAttribute("aria-pressed", String(state.vibrationEnabled));
+  vibrationToggle.setAttribute(
+    "aria-pressed",
+    String(vibrationSupported && state.vibrationEnabled),
+  );
+  vibrationToggle.toggleAttribute("disabled", !vibrationSupported);
+  vibrationToggle.setAttribute("aria-disabled", String(!vibrationSupported));
+  vibrationToggle.setAttribute(
+    "title",
+    vibrationSupported ? t("vibrationLabel") : t("vibrationUnsupportedInfo"),
+  );
   soundToggle.querySelector("span").textContent = state.soundEnabled
     ? t("soundOn")
     : t("soundOff");
-  vibrationToggle.querySelector("span").textContent = state.vibrationEnabled
-    ? t("vibrationOn")
-    : t("vibrationOff");
-
-  // Fullscreen controls sync
-  const fsSoundToggle = $("#fsSoundToggle");
-  if (fsSoundToggle) {
-    fsSoundToggle.classList.toggle("active", state.soundEnabled);
-    fsSoundToggle.setAttribute("aria-pressed", String(state.soundEnabled));
-  }
-  const fsVibrationToggle = $("#fsVibrationToggle");
-  if (fsVibrationToggle) {
-    fsVibrationToggle.classList.toggle("active", state.vibrationEnabled);
-    fsVibrationToggle.setAttribute("aria-pressed", String(state.vibrationEnabled));
-  }
+  vibrationToggle.querySelector("span").textContent = !vibrationSupported
+    ? t("vibrationUnavailable")
+    : state.vibrationEnabled
+      ? t("vibrationOn")
+      : t("vibrationOff");
 }
 
 function render() {
@@ -475,8 +480,8 @@ function playTickSound() {
 }
 
 function vibrateTick() {
-  if (state.vibrationEnabled && "vibrate" in navigator) {
-    navigator.vibrate(24);
+  if (state.vibrationEnabled && canVibrate()) {
+    navigator.vibrate([36, 18, 54]);
   }
 }
 
@@ -632,6 +637,77 @@ function getSwal() {
   });
 }
 
+function showVibrationUnsupportedNotice() {
+  getSwal().fire({
+    toast: true,
+    position: "top",
+    icon: "info",
+    title: t("vibrationUnsupportedInfo"),
+    showConfirmButton: false,
+    timer: 2600,
+    timerProgressBar: true,
+  });
+}
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 760px)").matches;
+}
+
+function syncMobileMenuState(isOpen, phase = isOpen ? "open" : "closed") {
+  const menu = $("#mobilePanelsShell");
+  const backdrop = $("#mobilePanelsBackdrop");
+  const toggle = $("#mobileMenuToggle");
+  if (!menu || !backdrop || !toggle) return;
+
+  menu.dataset.menuState = phase;
+  menu.setAttribute("aria-hidden", String(!isOpen));
+  toggle.setAttribute("aria-expanded", String(isOpen));
+  toggle.setAttribute(
+    "aria-label",
+    isOpen ? t("mobileMenuClose") : t("mobileMenuOpen"),
+  );
+  document.body.classList.toggle(
+    "mobile-menu-open",
+    isOpen || phase === "closing",
+  );
+
+  if (isOpen || phase === "closing") {
+    backdrop.hidden = false;
+    backdrop.dataset.visible = "true";
+  } else {
+    backdrop.hidden = true;
+    delete backdrop.dataset.visible;
+  }
+}
+
+function openMobileMenu() {
+  clearTimeout(mobileMenuCloseTimer);
+  syncMobileMenuState(true);
+}
+
+function closeMobileMenu() {
+  const menu = $("#mobilePanelsShell");
+  if (!menu || menu.dataset.menuState === "closed") return;
+
+  clearTimeout(mobileMenuCloseTimer);
+  syncMobileMenuState(false, "closing");
+  mobileMenuCloseTimer = window.setTimeout(() => {
+    syncMobileMenuState(false, "closed");
+  }, 340);
+}
+
+function toggleMobileMenu() {
+  const menu = $("#mobilePanelsShell");
+  if (!menu || !isMobileViewport()) return;
+
+  if (menu.dataset.menuState === "open") closeMobileMenu();
+  else openMobileMenu();
+}
+
+function closeMobileMenuIfNeeded() {
+  if (isMobileViewport()) closeMobileMenu();
+}
+
 async function setTarget() {
   const { value } = await getSwal().fire({
     title: t("targetPrompt"),
@@ -682,299 +758,11 @@ function addCustomDhikr(event) {
   render();
 }
 
-// ── Fullscreen Mode and Custom Resizable/Draggable Button Logic ──
-
-let fsBtnState = loadFSButtonState();
-
-function loadFSButtonState() {
-  const saved = localStorage.getItem("tasbih-fs-btn-state");
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {}
-  }
-  return {
-    left: null,
-    top: null,
-    size: 140
-  };
-}
-
-function initFSButtonPosition() {
-  const container = $("#fsDragContainer");
-  const btn = $("#fsCountButton");
-  if (!container || !btn) return;
-
-  if (!fsBtnState.size) fsBtnState.size = 140;
-
-  container.style.width = `${fsBtnState.size}px`;
-  container.style.height = `${fsBtnState.size}px`;
-  btn.style.fontSize = `${fsBtnState.size * 0.45}px`;
-
-  if (fsBtnState.left !== null && fsBtnState.top !== null) {
-    let left = fsBtnState.left;
-    let top = fsBtnState.top;
-
-    const maxLeft = window.innerWidth - fsBtnState.size;
-    const maxTop = window.innerHeight - fsBtnState.size;
-    left = Math.max(0, Math.min(left, maxLeft));
-    top = Math.max(0, Math.min(top, maxTop));
-
-    container.style.left = `${left}px`;
-    container.style.top = `${top}px`;
-    container.style.transform = "none";
-  } else {
-    const size = fsBtnState.size;
-    const left = (window.innerWidth - size) / 2;
-    const top = window.innerHeight * 0.72 - (size / 2);
-    container.style.left = `${left}px`;
-    container.style.top = `${top}px`;
-    container.style.transform = "none";
-  }
-}
-
-function showFSAlert(message) {
-  const alertNotif = $("#fsAlertNotification");
-  const alertText = $("#fsAlertText");
-  
-  if (!alertNotif || !alertText) return;
-  
-  alertText.textContent = message;
-  alertNotif.style.display = "block";
-  
-  // Retirer l'alerte après l'animation
-  setTimeout(() => {
-    alertNotif.style.display = "none";
-  }, 1200);
-}
-
-function resetFSButtonSize() {
-  const dragContainer = $("#fsDragContainer");
-  const countBtn = $("#fsCountButton");
-  
-  if (!dragContainer || !countBtn) return;
-  
-  const defaultSize = 140;
-  dragContainer.style.width = `${defaultSize}px`;
-  dragContainer.style.height = `${defaultSize}px`;
-  countBtn.style.fontSize = `${defaultSize * 0.45}px`;
-  
-  fsBtnState.size = defaultSize;
-  localStorage.setItem("tasbih-fs-btn-state", JSON.stringify(fsBtnState));
-}
-
-function openFullscreen() {
-  const overlay = $("#fullscreenOverlay");
-  if (!overlay) return;
-
-  overlay.style.display = "flex";
-  initFSButtonPosition();
-  
-  // Show helper tip and auto-fade out
-  const tip = $("#fsHelperTip");
-  if (tip) {
-    tip.style.opacity = "1";
-    tip.style.visibility = "visible";
-    setTimeout(() => {
-      tip.style.opacity = "0";
-      setTimeout(() => {
-        tip.style.visibility = "hidden";
-      }, 500);
-    }, 4500);
-  }
-
-  // Attempt real full screen if API exists
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  } else if (document.documentElement.webkitRequestFullscreen) {
-    document.documentElement.webkitRequestFullscreen();
-  }
-}
-
-function closeFullscreen() {
-  const overlay = $("#fullscreenOverlay");
-  if (!overlay) return;
-
-  overlay.style.display = "none";
-
-  if (document.fullscreenElement || document.webkitFullscreenElement) {
-    if (document.exitFullscreen) {
-      document.exitFullscreen().catch(() => {});
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    }
-  }
-}
-
-async function fsReset() {
-  if (state.count === 0) return;
-  const { isConfirmed } = await getSwal().fire({
-    title: t("resetConfirm"),
-    icon: "warning",
-    showCancelButton: true,
-    cancelButtonText: t("cancel"),
-    confirmButtonText: t("reset"),
-    confirmButtonColor: "#c0392b",
-  });
-  if (isConfirmed) {
-    resetCounter();
-  }
-}
-
-function setupFSEvents() {
-  const dragContainer = $("#fsDragContainer");
-  const resizeHandle = $("#fsResizeHandle");
-  const countBtn = $("#fsCountButton");
-  if (!dragContainer || !resizeHandle || !countBtn) return;
-
-  let isDragging = false;
-  let isResizing = false;
-  let hasMoved = false;
-  let dragOffset = { x: 0, y: 0 };
-  let startPointerX = 0;
-  let startPointerY = 0;
-  let startSize = 140;
-
-  // Drag to move pointer handlers
-  dragContainer.addEventListener("pointerdown", (e) => {
-    if (e.target === resizeHandle || resizeHandle.contains(e.target)) {
-      return; // Handled by resize
-    }
-    isDragging = true;
-    dragContainer.setPointerCapture(e.pointerId);
-
-    const rect = dragContainer.getBoundingClientRect();
-    dragOffset.x = e.clientX - rect.left;
-    dragOffset.y = e.clientY - rect.top;
-
-    startPointerX = e.clientX;
-    startPointerY = e.clientY;
-    hasMoved = false;
-  });
-
-  dragContainer.addEventListener("pointermove", (e) => {
-    if (!isDragging) return;
-
-    const moveX = e.clientX - startPointerX;
-    const moveY = e.clientY - startPointerY;
-    const distance = Math.sqrt(moveX * moveX + moveY * moveY);
-
-    if (distance > 15) {
-      hasMoved = true;
-    }
-
-    let left = e.clientX - dragOffset.x;
-    let top = e.clientY - dragOffset.y;
-
-    const size = dragContainer.offsetWidth;
-    left = Math.max(0, Math.min(left, window.innerWidth - size));
-    top = Math.max(0, Math.min(top, window.innerHeight - size));
-
-    dragContainer.style.left = `${left}px`;
-    dragContainer.style.top = `${top}px`;
-
-    fsBtnState.left = left;
-    fsBtnState.top = top;
-  });
-
-  dragContainer.addEventListener("pointerup", (e) => {
-    if (!isDragging) return;
-    isDragging = false;
-    dragContainer.releasePointerCapture(e.pointerId);
-
-    if (!hasMoved) {
-      addCount();
-    } else {
-      localStorage.setItem("tasbih-fs-btn-state", JSON.stringify(fsBtnState));
-    }
-  });
-
-  // Drag to resize pointer handlers
-  let hitLimitInThisDrag = false;
-  
-  resizeHandle.addEventListener("pointerdown", (e) => {
-    e.stopPropagation();
-    isResizing = true;
-    hitLimitInThisDrag = false;
-    resizeHandle.setPointerCapture(e.pointerId);
-
-    startPointerX = e.clientX;
-    startPointerY = e.clientY;
-    startSize = dragContainer.offsetWidth;
-  });
-
-  resizeHandle.addEventListener("pointermove", (e) => {
-    if (!isResizing) return;
-
-    const deltaX = e.clientX - startPointerX;
-    const deltaY = e.clientY - startPointerY;
-
-    // Average change
-    let newSize = startSize + (deltaX + deltaY);
-
-    // Dynamic max-size constraints
-    const maxSize = Math.min(400, Math.min(window.innerWidth, window.innerHeight) * 0.84);
-    let hitLimit = false;
-    let limitMessage = "";
-    
-    if (newSize < 80) {
-      newSize = 80;
-      hitLimit = true;
-      limitMessage = t("resizeMinLimit") || "Taille minimale atteinte";
-    } else if (newSize > maxSize) {
-      newSize = maxSize;
-      hitLimit = true;
-      limitMessage = t("resizeMaxLimit") || "Taille maximale atteinte";
-    }
-
-    const left = parseFloat(dragContainer.style.left) || 0;
-    const top = parseFloat(dragContainer.style.top) || 0;
-
-    const maxAllowedSize = Math.min(window.innerWidth - left, window.innerHeight - top);
-    if (newSize > maxAllowedSize) {
-      newSize = maxAllowedSize;
-      if (!hitLimit) {
-        hitLimit = true;
-        limitMessage = t("resizeSpaceLimit") || "Espace insuffisant";
-      }
-    }
-
-    // Réinitialiser si limite atteinte
-    if (hitLimit && !hitLimitInThisDrag) {
-      hitLimitInThisDrag = true;
-      resetFSButtonSize();
-      showFSAlert(limitMessage);
-      return;
-    }
-
-    dragContainer.style.width = `${newSize}px`;
-    dragContainer.style.height = `${newSize}px`;
-    countBtn.style.fontSize = `${newSize * 0.45}px`;
-
-    fsBtnState.size = newSize;
-  });
-
-  resizeHandle.addEventListener("pointerup", (e) => {
-    if (!isResizing) return;
-    isResizing = false;
-    resizeHandle.releasePointerCapture(e.pointerId);
-
-    localStorage.setItem("tasbih-fs-btn-state", JSON.stringify(fsBtnState));
-  });
-
-  // Prevent default scroll actions on touch screens when dragging
-  dragContainer.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
-}
-
-window.addEventListener("resize", () => {
-  const overlay = $("#fullscreenOverlay");
-  if (overlay && overlay.style.display === "flex") {
-    initFSButtonPosition();
-  }
-});
-
 function bindEvents() {
   $("#countButton").addEventListener("click", addCount);
+  $("#mobileMenuToggle").addEventListener("click", toggleMobileMenu);
+  $("#mobileMenuClose").addEventListener("click", closeMobileMenu);
+  $("#mobilePanelsBackdrop").addEventListener("click", closeMobileMenu);
   $("#resetButton").addEventListener("click", async () => {
     if (state.count === 0) return;
     const { isConfirmed } = await getSwal().fire({
@@ -989,14 +777,24 @@ function bindEvents() {
   });
   $("#targetButton").addEventListener("click", setTarget);
   $("#goalEditBtn").addEventListener("click", setDailyGoal);
-  $("#goalEditMobileBtn").addEventListener("click", setDailyGoal);
-  $("#showQuickBtn").addEventListener("click", showAllDhikrsModal);
+  $("#goalEditMobileBtn").addEventListener("click", () => {
+    closeMobileMenuIfNeeded();
+    setDailyGoal();
+  });
+  $("#showQuickBtn").addEventListener("click", () => {
+    closeMobileMenuIfNeeded();
+    showAllDhikrsModal();
+  });
   $("#soundToggle").addEventListener("click", () => {
     state.soundEnabled = !state.soundEnabled;
     saveState();
     renderFeedbackControls();
   });
   $("#vibrationToggle").addEventListener("click", () => {
+    if (!canVibrate()) {
+      showVibrationUnsupportedNotice();
+      return;
+    }
     state.vibrationEnabled = !state.vibrationEnabled;
     saveState();
     renderFeedbackControls();
@@ -1043,9 +841,10 @@ function bindEvents() {
   );
   const mobileCustomBtn = $("#customDhikrBtnMobile");
   if (mobileCustomBtn) {
-    mobileCustomBtn.addEventListener("click", () =>
-      $("#dhikrModal").showModal(),
-    );
+    mobileCustomBtn.addEventListener("click", () => {
+      closeMobileMenuIfNeeded();
+      $("#dhikrModal").showModal();
+    });
   }
   $("#dhikrForm").addEventListener("submit", addCustomDhikr);
   document
@@ -1077,10 +876,14 @@ function bindEvents() {
       return;
     }
     const quick = event.target.closest("[data-dhikr-id]");
-    if (quick) selectDhikr(quick.dataset.dhikrId);
+    if (quick) {
+      closeMobileMenuIfNeeded();
+      selectDhikr(quick.dataset.dhikrId);
+    }
   });
 
   window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMobileMenu();
     if (
       event.code === "Space" &&
       !["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)
@@ -1090,37 +893,12 @@ function bindEvents() {
     }
   });
 
-  // Fullscreen Mode triggers and handlers
-  const openFsBtn = $("#openFullscreenBtn");
-  if (openFsBtn) openFsBtn.addEventListener("click", openFullscreen);
-
-  const exitFsBtn = $("#exitFullscreenBtn");
-  if (exitFsBtn) exitFsBtn.addEventListener("click", closeFullscreen);
-
-  const fsResetBtn = $("#fsResetBtn");
-  if (fsResetBtn) fsResetBtn.addEventListener("click", fsReset);
-
-  const fsSoundToggle = $("#fsSoundToggle");
-  if (fsSoundToggle) {
-    fsSoundToggle.addEventListener("click", () => {
-      state.soundEnabled = !state.soundEnabled;
-      saveState();
-      renderFeedbackControls();
-      if (state.soundEnabled) playTickSound();
-    });
-  }
-
-  const fsVibrationToggle = $("#fsVibrationToggle");
-  if (fsVibrationToggle) {
-    fsVibrationToggle.addEventListener("click", () => {
-      state.vibrationEnabled = !state.vibrationEnabled;
-      saveState();
-      renderFeedbackControls();
-      if (state.vibrationEnabled) vibrateTick();
-    });
-  }
-
-  setupFSEvents();
+  window.addEventListener("resize", () => {
+    if (!isMobileViewport()) {
+      clearTimeout(mobileMenuCloseTimer);
+      syncMobileMenuState(false, "closed");
+    }
+  });
 }
 
 bindEvents();
