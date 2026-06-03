@@ -1,4 +1,4 @@
-const CACHE_NAME = "tasbih-online-v1-test";
+const CACHE_NAME = "tasbih-online-v1-test-2";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
