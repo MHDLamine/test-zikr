@@ -1,0 +1,76 @@
+{
+  "dhikrs": [
+    {
+      "id": "subhan",
+      "arabic": "سبحان الله",
+      "latin": "Subhan Allah",
+      "icon": "leaf"
+    },
+    {
+      "id": "hamd",
+      "arabic": "الحمد لله",
+      "latin": "Alhamdulillah",
+      "icon": "sprout"
+    },
+    {
+      "id": "akbar",
+      "arabic": "الله أكبر",
+      "latin": "Allahu Akbar",
+      "icon": "mosque"
+    },
+    {
+      "id": "tahlil",
+      "arabic": "لا إله إلا الله",
+      "latin": "La ilaha illa Allah",
+      "icon": "star"
+    },
+    {
+      "id": "istighfar",
+      "arabic": "أستغفر الله",
+      "latin": "Astaghfirullah",
+      "icon": "pen"
+    },
+    {
+      "id": "hawqala",
+      "arabic": "لا حول ولا قوة إلا بالله",
+      "latin": "La hawla wa la quwwata illa billah",
+      "icon": "shield"
+    },
+    {
+      "id": "salawat",
+      "arabic": "اللهم صل وسلم على نبينا محمد",
+      "latin": "Allahumma salli wa sallim 'ala nabiyyina Muhammad",
+      "icon": "heart"
+    },
+    {
+      "id": "hasbiya",
+      "arabic": "حسبي الله ونعم الوكيل",
+      "latin": "Hasbiya Allah wa ni'ma al-wakil",
+      "icon": "shield-check"
+    },
+    {
+      "id": "subhan_bihamdihi",
+      "arabic": "سبحان الله وبحمده",
+      "latin": "Subhan Allahi wa bihamdihi",
+      "icon": "flower"
+    },
+    {
+      "id": "subhan_azim",
+      "arabic": "سبحان الله العظيم",
+      "latin": "Subhan Allah al-Azim",
+      "icon": "mountain"
+    },
+    {
+      "id": "la_ilaha_wahdah",
+      "arabic": "لا إله إلا الله وحده لا شريك له له الملك وله الحمد وهو على كل شيء قدير",
+      "latin": "La ilaha illa Allah wahdahu la sharika lah, lahul mulku wa lahul hamdu wa huwa 'ala kulli shay'in qadir",
+      "icon": "crown"
+    },
+    {
+      "id": "sayyid_istighfar",
+      "arabic": "اللهم أنت ربي لا إله إلا أنت خلقتني وأنا عبدك",
+      "latin": "Allahumma anta rabbi la ilaha illa anta khalaqtani wa ana 'abduk",
+      "icon": "book-open"
+    }
+  ]
+}

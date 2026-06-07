@@ -11,6 +11,7 @@ const defaults = {
   theme: "light",
   language: "fr",
   dhikrs: [
+    { id: "neutral", arabic: "", latin: "", icon: "circle" },
     { id: "subhan", arabic: "سبحان الله", latin: "Subhan Allah", icon: "leaf" },
     { id: "hamd", arabic: "الحمد لله", latin: "Alhamdulillah", icon: "sprout" },
     { id: "akbar", arabic: "الله أكبر", latin: "Allahu Akbar", icon: "mosque" },
@@ -25,6 +26,50 @@ const defaults = {
       arabic: "أستغفر الله",
       latin: "Astaghfirullah",
       icon: "pen",
+    },
+    {
+      id: "hawqala",
+      arabic: "لا حول ولا قوة إلا بالله",
+      latin: "La hawla wa la quwwata illa billah",
+      icon: "shield",
+    },
+    {
+      id: "salawat",
+      arabic: "اللهم صل وسلم على نبينا محمد",
+      latin: "Allahumma salli wa sallim 'ala nabiyyina Muhammad",
+      icon: "heart",
+    },
+    {
+      id: "hasbiya",
+      arabic: "حسبي الله ونعم الوكيل",
+      latin: "Hasbiya Allah wa ni'ma al-wakil",
+      icon: "shield-check",
+    },
+    {
+      id: "subhan_bihamdihi",
+      arabic: "سبحان الله وبحمده",
+      latin: "Subhan Allahi wa bihamdihi",
+      icon: "flower",
+    },
+    {
+      id: "subhan_azim",
+      arabic: "سبحان الله العظيم",
+      latin: "Subhan Allah al-Azim",
+      icon: "mountain",
+    },
+    {
+      id: "la_ilaha_wahdah",
+      arabic:
+        "لا إله إلا الله وحده لا شريك له له الملك وله الحمد وهو على كل شيء قدير",
+      latin:
+        "La ilaha illa Allah wahdahu la sharika lah, lahul mulku wa lahul hamdu wa huwa 'ala kulli shay'in qadir",
+      icon: "crown",
+    },
+    {
+      id: "sayyid_istighfar",
+      arabic: "اللهم أنت ربي لا إله إلا أنت خلقتني وأنا عبدك",
+      latin: "Allahumma anta rabbi la ilaha illa anta khalaqtani wa ana 'abduk",
+      icon: "book-open",
     },
   ],
   history: [],
@@ -201,6 +246,8 @@ function canVibrate() {
 }
 
 const icons = {
+  circle:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>',
   leaf: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4c-8 0-14 4.5-14 10.5 0 3.2 2.6 5.5 5.8 5.5C17.8 20 22 12 20 4Z"/><path d="M4 21c3-6 8-9 14-11"/></svg>',
   sprout:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V10"/><path d="M12 10C9 5 5 4 3 4c0 5 3 8 9 8"/><path d="M12 10c3-5 7-6 9-6 0 5-3 8-9 8"/></svg>',
@@ -208,9 +255,33 @@ const icons = {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4z"/><path d="M8 10V8a4 4 0 0 1 8 0v2"/><path d="M12 4V2"/><path d="M7 20v-5h10v5"/></svg>',
   star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.4 5.9.8-4.3 4.2 1 5.8L12 16.5 6.8 19.2l1-5.8-4.3-4.2 5.9-.8L12 3Z"/></svg>',
   pen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 4 4 4L8 20H4v-4L16 4Z"/><path d="m13 7 4 4"/></svg>',
+  shield:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V7l-8-4Z"/></svg>',
+  heart:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 5.7c-2.1-2.1-5.4-1.9-7.3.4L12 7.8l-1.5-1.7C8.6 3.8 5.3 3.6 3.2 5.7 1 7.9 1.1 11.4 3.5 13.7L12 22l8.5-8.3c2.4-2.3 2.5-5.8.3-8Z"/></svg>',
+  "shield-check":
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V7l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>',
+  flower:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M6.3 17.7l2.1-2.1M15.6 8.4l2.1-2.1"/></svg>',
+  mountain:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 8-14 4 7 4-5 4 12H4Z"/></svg>',
+  crown:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 16l2-9 4 5 4-7 4 11H6Z"/></svg>',
+  "book-open":
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6c3 0 5 2 8 2s5-2 8-2v13c-3 0-5-2-8-2s-5 2-8 2V6Z"/><path d="M12 8v13"/></svg>',
   chevron:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
 };
+
+function mergeDhikrs(savedDhikrs) {
+  const catalog = structuredClone(defaults.dhikrs);
+  const custom = (savedDhikrs || []).filter((d) => d.id.startsWith("custom-"));
+  const ids = new Set(catalog.map((d) => d.id));
+  for (const dhikr of custom) {
+    if (!ids.has(dhikr.id)) catalog.push(dhikr);
+  }
+  return catalog;
+}
 
 function loadState() {
   try {
@@ -219,9 +290,7 @@ function loadState() {
     return {
       ...structuredClone(defaults),
       ...saved,
-      dhikrs: saved.dhikrs?.length
-        ? saved.dhikrs
-        : structuredClone(defaults.dhikrs),
+      dhikrs: mergeDhikrs(saved.dhikrs),
       history: Array.isArray(saved.history) ? saved.history : [],
       days: saved.days || {},
     };
@@ -355,11 +424,31 @@ function renderQuickLists() {
     .slice(0, 6)
     .map((dhikr) => {
       const isActive = dhikr.id === state.currentDhikrId;
+      const isCustom = dhikr.id.startsWith("custom-");
+      const isNeutral = dhikr.id === "neutral";
+      const label = isNeutral
+        ? `<strong class="quick-item-neutral-label">Dhikr libre</strong>`
+        : `<strong>${dhikr.arabic}</strong>`;
       return `
-    <button class="quick-item${isActive ? " active" : ""}" type="button" data-dhikr-id="${dhikr.id}">
-      ${icons[dhikr.icon] || icons.leaf}
-      <strong>${dhikr.arabic}</strong>
-    </button>`;
+    <div class="quick-item-wrap${isCustom ? " has-actions" : ""}">
+      <button class="quick-item${isActive ? " active" : ""}" type="button" data-dhikr-id="${dhikr.id}">
+        ${icons[dhikr.icon] || icons.leaf}
+        ${label}
+      </button>
+      ${
+        isCustom
+          ? `
+      <div class="quick-item-mobile-actions">
+        <button class="quick-action-btn" type="button" data-action="edit" data-dhikr-id="${dhikr.id}" aria-label="Modifier">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 4 4 4L8 20H4v-4L16 4Z"/><path d="m13 7 4 4"/></svg>
+        </button>
+        <button class="quick-action-btn" type="button" data-action="delete" data-dhikr-id="${dhikr.id}" aria-label="Supprimer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+        </button>
+      </div>`
+          : ""
+      }
+    </div>`;
     })
     .join("");
 }
@@ -507,10 +596,26 @@ async function showAllDhikrsModal() {
     html: state.dhikrs
       .map((d) => {
         const isActive = d.id === state.currentDhikrId;
-        return `<button class="swal-dhikr-btn${isActive ? " swal-dhikr-active" : ""}" type="button" data-dhikr-id="${d.id}">
-        <strong>${d.arabic}</strong>
-        <span>${d.latin}</span>
-      </button>`;
+        const isCustom = d.id.startsWith("custom-");
+        return `<div class="swal-dhikr-row">
+        <button class="swal-dhikr-btn${isActive ? " swal-dhikr-active" : ""}" type="button" data-dhikr-id="${d.id}">
+          <strong>${d.arabic || "—"}</strong>
+          <span>${d.latin || ""}</span>
+        </button>
+        ${
+          isCustom
+            ? `
+        <div class="swal-dhikr-actions">
+          <button class="swal-dhikr-action-btn" type="button" data-action="edit" data-dhikr-id="${d.id}" aria-label="Modifier">
+            <svg viewBox="0 0 24 24"><path d="m16 4 4 4L8 20H4v-4L16 4Z"/><path d="m13 7 4 4"/></svg>
+          </button>
+          <button class="swal-dhikr-action-btn" type="button" data-action="delete" data-dhikr-id="${d.id}" aria-label="Supprimer">
+            <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+          </button>
+        </div>`
+            : ""
+        }
+      </div>`;
       })
       .join(""),
     showConfirmButton: false,
@@ -520,6 +625,15 @@ async function showAllDhikrsModal() {
         btn.addEventListener("click", () => {
           selectDhikr(btn.dataset.dhikrId);
           Swal.close();
+        });
+      });
+      document.querySelectorAll(".swal-dhikr-action-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const { action, dhikrId } = btn.dataset;
+          Swal.close();
+          if (action === "edit") editDhikr(dhikrId);
+          else if (action === "delete") deleteDhikr(dhikrId);
         });
       });
     },
@@ -564,6 +678,60 @@ async function deleteDhikr(id) {
   render();
 }
 
+const ARABIC_KEYBOARD_HTML = `
+<div class="arabic-keyboard">
+  <div class="arabic-kb-row">
+    <button type="button" class="arabic-kb-key" data-char="ض">ض</button><button type="button" class="arabic-kb-key" data-char="ص">ص</button><button type="button" class="arabic-kb-key" data-char="ث">ث</button><button type="button" class="arabic-kb-key" data-char="ق">ق</button><button type="button" class="arabic-kb-key" data-char="ف">ف</button><button type="button" class="arabic-kb-key" data-char="غ">غ</button><button type="button" class="arabic-kb-key" data-char="ع">ع</button><button type="button" class="arabic-kb-key" data-char="ه">ه</button><button type="button" class="arabic-kb-key" data-char="خ">خ</button><button type="button" class="arabic-kb-key" data-char="ح">ح</button><button type="button" class="arabic-kb-key" data-char="ج">ج</button><button type="button" class="arabic-kb-key" data-char="د">د</button>
+  </div>
+  <div class="arabic-kb-row">
+    <button type="button" class="arabic-kb-key" data-char="ش">ش</button><button type="button" class="arabic-kb-key" data-char="س">س</button><button type="button" class="arabic-kb-key" data-char="ي">ي</button><button type="button" class="arabic-kb-key" data-char="ب">ب</button><button type="button" class="arabic-kb-key" data-char="ل">ل</button><button type="button" class="arabic-kb-key" data-char="ا">ا</button><button type="button" class="arabic-kb-key" data-char="ت">ت</button><button type="button" class="arabic-kb-key" data-char="ن">ن</button><button type="button" class="arabic-kb-key" data-char="م">م</button><button type="button" class="arabic-kb-key" data-char="ك">ك</button><button type="button" class="arabic-kb-key" data-char="ط">ط</button>
+  </div>
+  <div class="arabic-kb-row">
+    <button type="button" class="arabic-kb-key" data-char="ئ">ئ</button><button type="button" class="arabic-kb-key" data-char="ء">ء</button><button type="button" class="arabic-kb-key" data-char="ؤ">ؤ</button><button type="button" class="arabic-kb-key" data-char="ر">ر</button><button type="button" class="arabic-kb-key" data-char="لا">لا</button><button type="button" class="arabic-kb-key" data-char="ى">ى</button><button type="button" class="arabic-kb-key" data-char="ة">ة</button><button type="button" class="arabic-kb-key" data-char="و">و</button><button type="button" class="arabic-kb-key" data-char="ز">ز</button><button type="button" class="arabic-kb-key" data-char="ظ">ظ</button><button type="button" class="arabic-kb-key" data-char="ذ">ذ</button>
+  </div>
+  <div class="arabic-kb-row">
+    <button type="button" class="arabic-kb-key" data-char="أ">أ</button><button type="button" class="arabic-kb-key" data-char="إ">إ</button><button type="button" class="arabic-kb-key" data-char="آ">آ</button><button type="button" class="arabic-kb-key arabic-kb-space" data-action="space">مسافة</button><button type="button" class="arabic-kb-key arabic-kb-backspace" data-action="backspace">⌫</button>
+  </div>
+</div>`;
+
+function attachArabicKeyboard(input, keyboard) {
+  if (!input || !keyboard) return;
+
+  keyboard.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+  });
+
+  keyboard.addEventListener("click", (e) => {
+    const key = e.target.closest(".arabic-kb-key");
+    if (!key) return;
+
+    const action = key.dataset.action;
+    const char = key.dataset.char;
+
+    input.focus();
+
+    if (action === "backspace") {
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      if (start !== end) {
+        const val = input.value;
+        input.value = val.slice(0, start) + val.slice(end);
+        input.setSelectionRange(start, start);
+      } else if (start > 0) {
+        const val = input.value;
+        input.value = val.slice(0, start - 1) + val.slice(start);
+        input.setSelectionRange(start - 1, start - 1);
+      }
+    } else if (action === "space") {
+      insertAtCursor(input, " ");
+    } else if (char) {
+      insertAtCursor(input, char);
+    }
+
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
 async function editDhikr(id) {
   const dhikr = state.dhikrs.find((d) => d.id === id);
   if (!dhikr) return;
@@ -571,13 +739,24 @@ async function editDhikr(id) {
     title: t("editDhikrTitle"),
     html: `
       <label style="display:block;text-align:start;font-size:.85rem;font-weight:600;margin-bottom:4px">${t("arabicLabel")}</label>
-      <input id="swal-arabic" class="swal2-input swal-tasbih-input" dir="rtl" placeholder="${t("arabicPlaceholder")}" value="${dhikr.arabic}">
+      <input id="swal-arabic" class="swal2-input swal-tasbih-input" dir="rtl" placeholder="${t("arabicPlaceholder")}" value="${dhikr.arabic}" inputmode="none" autocomplete="off">
+      ${ARABIC_KEYBOARD_HTML}
       <label style="display:block;text-align:start;font-size:.85rem;font-weight:600;margin:10px 0 4px">${t("latinLabel")}</label>
       <input id="swal-latin" class="swal2-input swal-tasbih-input" placeholder="${t("latinPlaceholder")}" value="${dhikr.latin}">
     `,
     showCancelButton: true,
     cancelButtonText: t("cancel"),
     confirmButtonText: t("add"),
+    didOpen: () => {
+      const input = document.getElementById("swal-arabic");
+      const keyboard = document.querySelector(
+        ".swal2-html-container .arabic-keyboard",
+      );
+      if (input && keyboard) {
+        keyboard.hidden = false;
+        attachArabicKeyboard(input, keyboard);
+      }
+    },
     preConfirm: () => {
       const arabic = document.getElementById("swal-arabic").value.trim();
       const latin = document.getElementById("swal-latin").value.trim();
@@ -758,6 +937,81 @@ function addCustomDhikr(event) {
   render();
 }
 
+function initMobileQuickAccordion() {
+  const panel = $("#mobileQuickPanel");
+  const btn = $("#mobileQuickToggleBtn");
+  const body = $("#mobileQuickBody");
+  if (!panel || !btn || !body) return;
+
+  function updateHeight() {
+    const isOpen = panel.dataset.collapsed === "false";
+    const h = isOpen
+      ? "var(--mobile-quick-height-open)"
+      : "var(--mobile-quick-height)";
+    document.documentElement.style.setProperty(
+      "--mobile-quick-height",
+      isOpen ? "170px" : "58px",
+    );
+  }
+
+  function setRingOffset(isOpen) {
+    document.documentElement.style.setProperty(
+      "--ring-extra-offset",
+      isOpen ? "0px" : "110px",
+    );
+  }
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isCollapsed = panel.dataset.collapsed === "true";
+    panel.dataset.collapsed = isCollapsed ? "false" : "true";
+    btn.setAttribute("aria-expanded", String(isCollapsed));
+    body.hidden = !isCollapsed;
+    document.documentElement.style.setProperty(
+      "--mobile-quick-height",
+      isCollapsed ? "170px" : "58px",
+    );
+    setRingOffset(!isCollapsed);
+  });
+
+  setRingOffset(false);
+}
+
+function initArabicKeyboard() {
+  const input = $("#newArabic");
+  const keyboard = $("#arabicKeyboard");
+  if (!input || !keyboard) return;
+
+  input.addEventListener("focus", () => {
+    keyboard.hidden = false;
+  });
+
+  attachArabicKeyboard(input, keyboard);
+
+  document.addEventListener("click", (e) => {
+    if (
+      !keyboard.hidden &&
+      !keyboard.contains(e.target) &&
+      e.target !== input
+    ) {
+      keyboard.hidden = true;
+    }
+  });
+
+  $("#dhikrModal").addEventListener("close", () => {
+    keyboard.hidden = true;
+  });
+}
+
+function insertAtCursor(input, text) {
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  const val = input.value;
+  input.value = val.slice(0, start) + text + val.slice(end);
+  const pos = start + text.length;
+  input.setSelectionRange(pos, pos);
+}
+
 function bindEvents() {
   $("#countButton").addEventListener("click", addCount);
   $("#mobileMenuToggle").addEventListener("click", toggleMobileMenu);
@@ -903,3 +1157,20 @@ function bindEvents() {
 
 bindEvents();
 render();
+initMobileQuickAccordion();
+initArabicKeyboard();
+
+(function showSplash() {
+  const splash = document.getElementById("splashScreen");
+  if (!splash) return;
+  setTimeout(() => {
+    splash.classList.add("splash-fade");
+    splash.addEventListener(
+      "transitionend",
+      () => {
+        splash.classList.add("splash-hidden");
+      },
+      { once: true },
+    );
+  }, 2600);
+})();

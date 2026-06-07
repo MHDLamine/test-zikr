@@ -11,7 +11,10 @@
       gtag("config", "G-NX28PEM2F1");
     </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta name="theme-color" content="#123a31" />
     <meta
       name="description"
@@ -40,6 +43,16 @@
     ></script>
   </head>
   <body>
+    <div class="splash-screen" id="splashScreen" aria-hidden="true">
+      <div class="splash-inner">
+        <p class="splash-arabic">إِنَّ اللَّهَ مَعَ الصَّابِرِينَ</p>
+        <p class="splash-ref">— Al-Baqara, 2:153</p>
+        <p class="splash-translation">
+          « Certes, Allah est avec les patients. »
+        </p>
+      </div>
+    </div>
+
     <main class="app-shell">
       <header class="topbar">
         <a class="brand" href="#" aria-label="Tasbih Online">
@@ -172,9 +185,7 @@
                 id="countButton"
                 type="button"
                 aria-label="Ajouter un dhikr"
-              >
-                +
-              </button>
+              ></button>
             </div>
 
             <div class="counter-actions">
@@ -217,27 +228,51 @@
             </button>
           </div>
 
-          <section class="mobile-quick panel">
-            <div class="panel-header">
-              <div class="panel-title">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 4h12v17l-6-3-6 3V4Z" />
+          <section
+            class="mobile-quick panel"
+            id="mobileQuickPanel"
+            data-collapsed="true"
+          >
+            <div
+              class="panel-header mobile-quick-header"
+              id="mobileQuickToggleRow"
+            >
+              <button
+                class="mobile-quick-toggle"
+                id="mobileQuickToggleBtn"
+                type="button"
+                aria-expanded="false"
+                aria-controls="mobileQuickBody"
+              >
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 4h12v17l-6-3-6 3V4Z" />
+                  </svg>
+                  <h2 id="mobileQuickTitle">Dhikr rapides</h2>
+                </div>
+                <svg
+                  class="mobile-quick-chevron"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
                 </svg>
-                <h2 id="mobileQuickTitle">Dhikr rapides</h2>
-              </div>
+              </button>
               <button class="link-button" id="showQuickBtn" type="button">
                 Voir tout
               </button>
             </div>
-            <div class="quick-scroll" id="quickScroll"></div>
-            <button
-              class="outline-button"
-              id="customDhikrBtnMobile"
-              type="button"
-              style="margin-top: 12px"
-            >
-              + Personnaliser
-            </button>
+            <div class="mobile-quick-body" id="mobileQuickBody" hidden>
+              <div class="quick-scroll" id="quickScroll"></div>
+              <button
+                class="outline-button"
+                id="customDhikrBtnMobile"
+                type="button"
+                style="margin-top: 12px"
+              >
+                + Personnaliser
+              </button>
+            </div>
           </section>
         </section>
       </section>
@@ -317,8 +352,81 @@
         <h2 id="modalTitle">Ajouter un dhikr</h2>
         <label
           ><span id="arabicLabel">Texte arabe</span
-          ><input id="newArabic" required placeholder="الحمد لله"
+          ><input
+            id="newArabic"
+            required
+            placeholder="الحمد لله"
+            dir="rtl"
+            autocomplete="off"
+            inputmode="none"
         /></label>
+        <div class="arabic-keyboard" id="arabicKeyboard" hidden>
+          <div class="arabic-kb-row">
+            <button type="button" class="arabic-kb-key" data-char="ض">ض</button
+            ><button type="button" class="arabic-kb-key" data-char="ص">ص</button
+            ><button type="button" class="arabic-kb-key" data-char="ث">ث</button
+            ><button type="button" class="arabic-kb-key" data-char="ق">ق</button
+            ><button type="button" class="arabic-kb-key" data-char="ف">ف</button
+            ><button type="button" class="arabic-kb-key" data-char="غ">غ</button
+            ><button type="button" class="arabic-kb-key" data-char="ع">ع</button
+            ><button type="button" class="arabic-kb-key" data-char="ه">ه</button
+            ><button type="button" class="arabic-kb-key" data-char="خ">خ</button
+            ><button type="button" class="arabic-kb-key" data-char="ح">ح</button
+            ><button type="button" class="arabic-kb-key" data-char="ج">ج</button
+            ><button type="button" class="arabic-kb-key" data-char="د">
+              د
+            </button>
+          </div>
+          <div class="arabic-kb-row">
+            <button type="button" class="arabic-kb-key" data-char="ش">ش</button
+            ><button type="button" class="arabic-kb-key" data-char="س">س</button
+            ><button type="button" class="arabic-kb-key" data-char="ي">ي</button
+            ><button type="button" class="arabic-kb-key" data-char="ب">ب</button
+            ><button type="button" class="arabic-kb-key" data-char="ل">ل</button
+            ><button type="button" class="arabic-kb-key" data-char="ا">ا</button
+            ><button type="button" class="arabic-kb-key" data-char="ت">ت</button
+            ><button type="button" class="arabic-kb-key" data-char="ن">ن</button
+            ><button type="button" class="arabic-kb-key" data-char="م">م</button
+            ><button type="button" class="arabic-kb-key" data-char="ك">ك</button
+            ><button type="button" class="arabic-kb-key" data-char="ط">
+              ط
+            </button>
+          </div>
+          <div class="arabic-kb-row">
+            <button type="button" class="arabic-kb-key" data-char="ئ">ئ</button
+            ><button type="button" class="arabic-kb-key" data-char="ء">ء</button
+            ><button type="button" class="arabic-kb-key" data-char="ؤ">ؤ</button
+            ><button type="button" class="arabic-kb-key" data-char="ر">ر</button
+            ><button type="button" class="arabic-kb-key" data-char="لا">
+              لا</button
+            ><button type="button" class="arabic-kb-key" data-char="ى">ى</button
+            ><button type="button" class="arabic-kb-key" data-char="ة">ة</button
+            ><button type="button" class="arabic-kb-key" data-char="و">و</button
+            ><button type="button" class="arabic-kb-key" data-char="ز">ز</button
+            ><button type="button" class="arabic-kb-key" data-char="ظ">ظ</button
+            ><button type="button" class="arabic-kb-key" data-char="ذ">
+              ذ
+            </button>
+          </div>
+          <div class="arabic-kb-row">
+            <button type="button" class="arabic-kb-key" data-char="أ">أ</button
+            ><button type="button" class="arabic-kb-key" data-char="إ">إ</button
+            ><button type="button" class="arabic-kb-key" data-char="آ">آ</button
+            ><button
+              type="button"
+              class="arabic-kb-key arabic-kb-space"
+              data-action="space"
+            >
+              مسافة</button
+            ><button
+              type="button"
+              class="arabic-kb-key arabic-kb-backspace"
+              data-action="backspace"
+            >
+              ⌫
+            </button>
+          </div>
+        </div>
         <label
           ><span id="latinLabel">Transliteration</span
           ><input id="newLatin" required placeholder="Alhamdulillah"

@@ -1,9 +1,10 @@
-const CACHE_NAME = "tasbih-online-v1-test-2";
+const CACHE_NAME = "tasbih-online-v-0.0.2";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
   "./style.css",
   "./script.js",
+  "./zikr.json",
   "./manifest.json",
   "https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap",
   "https://cdn.jsdelivr.net/npm/sweetalert2@11",
@@ -11,12 +12,10 @@ const ASSETS_TO_CACHE = [
 
 // Installation du Service Worker
 self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Installation...");
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => {
-        console.log("[Service Worker] Mise en cache des assets");
         return cache.addAll(
           ASSETS_TO_CACHE.filter(
             (url) =>
@@ -31,7 +30,6 @@ self.addEventListener("install", (event) => {
 
 // Activation du Service Worker
 self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activation...");
   event.waitUntil(
     caches
       .keys()
@@ -39,7 +37,6 @@ self.addEventListener("activate", (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
-              console.log("[Service Worker] Suppression du cache:", cacheName);
               return caches.delete(cacheName);
             }
           }),
